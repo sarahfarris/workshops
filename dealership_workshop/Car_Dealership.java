@@ -1,6 +1,7 @@
 package dealership_workshop;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Car_Dealership {
     // create a file writer to input cars
@@ -23,9 +24,16 @@ public class Car_Dealership {
         this.phoneNr = phoneNr;
         this.inventory = new ArrayList<>(inventory);
     }
+    public Car_Dealership(String line){
+        String[] fields = line.split("\\|");
+        name = fields[0];
+        address = fields[1];
+        phoneNr = fields[2];
+    }
 
-    //do I need to add the line splitter for the file here?
-    //then if that is the case, do I need a toString() method here?
+    //then if that is the case, do I need a toString() method here? I put it in the Vehicle class
+
+
 
     public String getName(){
         return name;
