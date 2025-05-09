@@ -11,9 +11,8 @@ public class Car_Dealership {
     // list all cars from file
     // add and remove cars
 
-    // and add/remove cars to the file
     // will hold info about the dealership (name, address) and maintain a list of vehicles. since it has a list of vehicles, it will also have the methods that search the list for matching vehicles as well as add/remove vehicles
-    //will need getters and setters for every field except inventory
+
     String name;
     String address;
     String phoneNr;
@@ -35,7 +34,7 @@ public class Car_Dealership {
         phoneNr = fields[2];
     }
 
-    //then if that is the case, do I need a toString() method here? I put it in the Vehicle class
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -133,7 +132,6 @@ public class Car_Dealership {
             System.out.println("Error!");
             throw new RuntimeException(e);
         }
-
         return inventory;
     }
 
