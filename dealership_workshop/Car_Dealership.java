@@ -1,14 +1,16 @@
 package dealership_workshop;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Car_Dealership {
-    // create a file writer to input cars
+
     // be able to search by different properties within file
     // list all cars from file
     // add and remove cars
-    // this class will contain getters for search functions
+
     // and add/remove cars to the file
     // will hold info about the dealership (name, address) and maintain a list of vehicles. since it has a list of vehicles, it will also have the methods that search the list for matching vehicles as well as add/remove vehicles
     //will need getters and setters for every field except inventory
@@ -17,6 +19,7 @@ public class Car_Dealership {
     String phoneNr;
 
     ArrayList<Vehicle> inventory; //just the declaration, not instantiation
+
     // the array list is now part of the parameter
     public Car_Dealership(String name, String address, String phoneNr, ArrayList<Vehicle> inventory) {
         this.name = name;
@@ -24,7 +27,8 @@ public class Car_Dealership {
         this.phoneNr = phoneNr;
         this.inventory = new ArrayList<>(inventory);
     }
-    public Car_Dealership(String line){
+
+    public Car_Dealership(String line) {
         String[] fields = line.split("\\|");
         name = fields[0];
         address = fields[1];
@@ -32,54 +36,108 @@ public class Car_Dealership {
     }
 
     //then if that is the case, do I need a toString() method here? I put it in the Vehicle class
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n")
+                .append(name)
+                .append(" | ")
+                .append(address)
+                .append(" | ")
+                .append(phoneNr);
+        return sb.toString();
+    }
 
 
-
-    public String getName(){
+    public String getName() {
         return name;
     }
-    public String getAddress(){
+
+    public String getAddress() {
         return address;
     }
-    public String getPhoneNr(){
+
+    public String getPhoneNr() {
         return phoneNr;
     }
 
-    public Vehicle getVehiclesByPrice(double min, double max){
+
+    public Vehicle getVehiclesByPrice(double min, double max) {
         ArrayList<Vehicle> inventory;
         // create user input variables for min price and max price, and make it a range to search through
         return null;
     }
-    public Vehicle getVehiclesByMakeModel(String make, String model){
+
+    public Vehicle getVehiclesByMakeModel(String make, String model) {
         ArrayList<Vehicle> inventory;
         //create user input variables that searches by make and model, similar to how we did it in ledgerApp for search by vendor
         return null;
     }
-    public Vehicle getVehiclesByYear(double min, double max){
+
+    public Vehicle getVehiclesByYear(double min, double max) {
         ArrayList<Vehicle> inventory;
         //create user input variables for min/max year, make it a range to search through
         return null;
     }
-    public Vehicle getVehiclesByColor(String color){
+
+    public Vehicle getVehiclesByColor(String color) {
         ArrayList<Vehicle> inventory;
         return null;
     }
-    public Vehicle getVehiclesByMileage(double min, double max){
+
+    public Vehicle getVehiclesByMileage(double min, double max) {
         ArrayList<Vehicle> inventory;
         return null;
     }
-    public Vehicle getVehiclesByType(String vehicleType){
+
+    public Vehicle getVehiclesByType(String vehicleType) {
         ArrayList<Vehicle> inventory;
         return null;
     }
-    public Vehicle getAllVehicles(){
+
+    public Vehicle getAllVehicles() {
         ArrayList<Vehicle> inventory;
         return null;
     }
-    public Vehicle addVehicle(){
+
+    public Vehicle addVehicle() {
         return null;
     }
-    public Vehicle removeVehicle(){
+
+    public Vehicle removeVehicle() {
         return null;
+    }
+
+    public static void printAllVehicles(ArrayList<Vehicle> inventory) {
+        if (inventory.isEmpty()) {
+            System.out.println("No vehicles found!");
+            return;
+        }
+        for (int i = 0; i < inventory.size(); i++) {
+            System.out.println(inventory.get(i));
+        }
+        printAllVehicles(inventory);
+    }
+
+    public static ArrayList<Vehicle> getAllVehicles(String fileName) {
+        ArrayList<Vehicle> inventory = new ArrayList<>();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            String line;
+            while ((line = br.readLine()) != null) {
+                Vehicle vehicle = new Vehicle(line);
+                inventory.add(vehicle);
+            }
+            br.close();
+        } catch (IOException e) {
+            System.out.println("Error!");
+            throw new RuntimeException(e);
+        }
+
+        return inventory;
+    }
+
+    public static void readAllVehicles(String fileName) {
+        printAllVehicles(getAllVehicles(fileName));
     }
 }

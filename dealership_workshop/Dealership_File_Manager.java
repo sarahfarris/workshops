@@ -22,7 +22,7 @@ public class Dealership_File_Manager {
     public Dealership_File_Manager() throws IOException {
     }
     public String readLine() throws IOException {
-        return readLine(false, null);
+        return readLine();
     }
 
     public Car_Dealership getDealership(String fileName){
@@ -34,7 +34,7 @@ public class Dealership_File_Manager {
             while ((line = br.readLine()) != null){
                 Car_Dealership dealership = new Car_Dealership(line);
             }
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return null;
@@ -58,6 +58,7 @@ public class Dealership_File_Manager {
             }
         } catch (IOException e) {
             System.out.println("Error loading vehicle inventory");
+            createBackupFile(fileName);
             throw new RuntimeException(e);
         }
         //suggestion from intelliJ to add try/catch around bw.close()
@@ -69,9 +70,9 @@ public class Dealership_File_Manager {
     }
 
     //method to create backup data file
-    public static void createBackupFile(String fileName, String backupFileName){
+    public static void createBackupFile(String backupFileName){
         Path sourcePath = Paths.get(fileName);
-        Path backupPath = Paths.get(backupFileName);
+        Path backupPath = Paths.get(backupFileName); //suggestion from intelliJ and google, need to know more about what this does
         try {
             Files.copy(sourcePath, backupPath, StandardCopyOption.REPLACE_EXISTING);
             System.out.println("Backup file created.");
