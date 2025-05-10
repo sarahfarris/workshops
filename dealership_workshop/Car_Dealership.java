@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Car_Dealership {
 
@@ -13,21 +14,25 @@ public class Car_Dealership {
 
     // will hold info about the dealership (name, address) and maintain a list of vehicles. since it has a list of vehicles, it will also have the methods that search the list for matching vehicles as well as add/remove vehicles
 
-    String name;
-    String address;
-    String phoneNr;
+     String name;
+     String address;
+     String phoneNr;
+     ArrayList<Vehicle> inventory; //just the declaration, not instantiation
+     static Scanner scanner;
 
-    ArrayList<Vehicle> inventory; //just the declaration, not instantiation
+    public static ArrayList<User_Interface> dealerships = new ArrayList<User_Interface>(); // list of dealerships where they will contain their own list of vehicles
 
-    // the array list is now part of the parameter
-    public Car_Dealership(String name, String address, String phoneNr, ArrayList<Vehicle> inventory) {
+
+    // the array list is now part of the parameter, removed it for now: , ArrayList<Vehicle> inventory
+    public Car_Dealership(String name, String address, String phoneNr) {
         this.name = name;
         this.address = address;
         this.phoneNr = phoneNr;
-        this.inventory = new ArrayList<>(inventory);
+        this.inventory = new ArrayList<>();
+        scanner = new Scanner(System.in);
     }
 
-    public Car_Dealership(String line) {
+     Car_Dealership(String line) {
         String[] fields = line.split("\\|");
         name = fields[0];
         address = fields[1];
@@ -38,12 +43,7 @@ public class Car_Dealership {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\n")
-                .append(name)
-                .append(" | ")
-                .append(address)
-                .append(" | ")
-                .append(phoneNr);
+        sb.append("\n").append(name).append(" | ").append(address).append(" | ").append(phoneNr);
         return sb.toString();
     }
 
@@ -62,61 +62,96 @@ public class Car_Dealership {
 
 
     public Vehicle getVehiclesByPrice(double min, double max) {
-        ArrayList<Vehicle> inventory;
+//         inventory; I don't think I need this
         // create user input variables for min price and max price, and make it a range to search through
+        for (Vehicle vehicle : this.inventory) {
+            if (vehicle.getPrice() == vehicle.price) {
+                System.out.println(vehicle);
+            }
+        }
         return null;
     }
 
-    public Vehicle getVehiclesByMakeModel(String make, String model) {
-        ArrayList<Vehicle> inventory;
+
+    public ArrayList<Vehicle> getVehiclesByMake(String make) {
+//        ArrayList<Vehicle> inventory;
         //create user input variables that searches by make and model, similar to how we did it in ledgerApp for search by vendor
-        return null;
-    }
-
-    public Vehicle getVehiclesByYear(double min, double max) {
-        ArrayList<Vehicle> inventory;
-        //create user input variables for min/max year, make it a range to search through
-        return null;
-    }
-
-    public Vehicle getVehiclesByColor(String color) {
-        ArrayList<Vehicle> inventory;
-        return null;
-    }
-
-    public Vehicle getVehiclesByMileage(double min, double max) {
-        ArrayList<Vehicle> inventory;
-        return null;
-    }
-
-    public Vehicle getVehiclesByType(String vehicleType) {
-        ArrayList<Vehicle> inventory;
-        return null;
-    }
-
-    public Vehicle getAllVehicles() {
-        ArrayList<Vehicle> inventory;
-        return null;
-    }
-
-    public Vehicle addVehicle() {
-        return null;
-    }
-
-    public Vehicle removeVehicle() {
-        return null;
-    }
-
-    public static void printAllVehicles(ArrayList<Vehicle> inventory) {
-        if (inventory.isEmpty()) {
-            System.out.println("No vehicles found!");
-            return;
+        ArrayList<Vehicle> result = new ArrayList<>();
+        for (Vehicle vehicle : this.inventory) {
+            if (vehicle.getMake().equalsIgnoreCase(make)) {
+                System.out.println(vehicle);
+            }
         }
-        for (int i = 0; i < inventory.size(); i++) {
-            System.out.println(inventory.get(i));
-        }
-        printAllVehicles(inventory);
+        return result;
     }
+
+    public ArrayList<Vehicle> getVehiclesByModel(String model) {
+//        ArrayList<Vehicle> inventory;
+        //create user input variables that searches by make and model, similar to how we did it in ledgerApp for search by vendor
+        ArrayList<Vehicle> result = new ArrayList<>();
+        for (Vehicle vehicle : this.inventory) {
+            if (vehicle.getModel().equalsIgnoreCase(model)) {
+                System.out.println(vehicle);
+                //should i print result? do I even need a print statement here?
+            }
+        }
+        return result;
+    }
+
+    public ArrayList<Vehicle> getVehiclesByType(String vehicleType) {
+        ArrayList<Vehicle> result = new ArrayList<>();
+        for (Vehicle vehicle : this.inventory) {
+            if (vehicle.getVehicleType().equalsIgnoreCase(vehicleType)) {
+                System.out.println(vehicle);
+            }
+        }
+        return result;
+    }
+
+    public ArrayList<Vehicle> getVehiclesByYear(int year) {
+//        ArrayList<Vehicle> inventory;
+        ArrayList<Vehicle> result = new ArrayList<>();
+        for (Vehicle vehicle : this.inventory) {
+            if (vehicle.getYear() == year) {
+                System.out.println(vehicle);
+            }
+        }
+        return result;
+    }
+
+    public ArrayList<Vehicle> getVehiclesByColor(String color) {
+//        ArrayList<Vehicle> inventory;
+        ArrayList<Vehicle> result = new ArrayList<>();
+        for (Vehicle vehicle : this.inventory) {
+            if (vehicle.getColor().equalsIgnoreCase(color)) {
+                System.out.println(vehicle);
+            }
+        }
+        return result;
+    }
+
+    public ArrayList<Vehicle> getVehiclesByMileage(double odometer) {
+        ArrayList<Vehicle> result = new ArrayList<>();
+        for (Vehicle vehicle : this.inventory) {
+            if (vehicle.getOdometer() == odometer) {
+                System.out.println(vehicle);
+            }
+        }
+        return result;
+    }
+
+
+    //method to add a vehicle to the inventory of THIS dealership
+    public void addVehicle(Vehicle vehicle) {
+        this.inventory.add(vehicle);
+//        return null; changing this return since we are adding void, and added this.inventory
+    }
+
+    //method to remove a vehicle from the inventory of THIS dealership
+    public void removeVehicle(Vehicle vehicle) {
+        this.inventory.remove(vehicle);
+    }
+
 
     public static ArrayList<Vehicle> getAllVehicles(String fileName) {
         ArrayList<Vehicle> inventory = new ArrayList<>();
@@ -135,7 +170,18 @@ public class Car_Dealership {
         return inventory;
     }
 
-    public static void readAllVehicles(String fileName) {
+    public static ArrayList<Vehicle> readAllVehicles(String fileName) {
         printAllVehicles(getAllVehicles(fileName));
+        return null;
+    }
+
+    public static void printAllVehicles(ArrayList<Vehicle> fileName) {
+        if (fileName.isEmpty()) {
+            System.out.println("No vehicles found!");
+            return;
+        }
+        for (Vehicle vehicle : fileName) {
+            System.out.println(vehicle);
+        }
     }
 }

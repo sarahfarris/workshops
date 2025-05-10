@@ -16,7 +16,7 @@ public class Dealership_File_Manager {
     //parsing the data, and creating a Dealership object full of vehicles from the
     //file. It will also be responsible for saving a dealership and the vehicles back
     //into the file in the same pipe-delimited format
-    BufferedWriter bw = new BufferedWriter(new FileWriter("inventory.csv"));
+    BufferedWriter bw = new BufferedWriter(new FileWriter("inventory.csv")); //do I change the file name to src/main/java/week5/inventory?
     static String fileName = "inventory.csv";
 
     public Dealership_File_Manager() throws IOException {
@@ -81,9 +81,6 @@ public class Dealership_File_Manager {
             throw new RuntimeException(e);
         }
         }
-
-
-
 
 
     }

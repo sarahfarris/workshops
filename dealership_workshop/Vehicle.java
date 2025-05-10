@@ -1,6 +1,6 @@
 package dealership_workshop;
 
-public class Vehicle {
+class Vehicle extends User_Interface {
     // will hold info about a specific vehicle\
     //will hold getters and setters for every field
     int vin;
@@ -12,7 +12,7 @@ public class Vehicle {
     int odometer;
     double price;
 
-     Vehicle(int vin, int year, String make, String model, String vehicleType, String color, int odometer, double price) {
+     public Vehicle(int vin, int year, String make, String model, String vehicleType, String color, int odometer, double price) {
         this.vin = vin;
         this.year = year;
         this.make = make;
@@ -22,7 +22,7 @@ public class Vehicle {
         this.odometer = odometer;
         this.price = price;
     }
-     Vehicle(String line){
+      Vehicle(String line){
         String[] fields = line.split("\\|");
         vin = Integer.parseInt(fields[0]);
         year = Integer.parseInt(fields[1]);
@@ -33,7 +33,7 @@ public class Vehicle {
         odometer = Integer.parseInt(fields[6]);
         price = Double.parseDouble(fields[7]);
     }
-
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("\n")
@@ -49,9 +49,7 @@ public class Vehicle {
                 .append(" | ")
                 .append(color)
                 .append(" | ")
-                .append(odometer)
-                .append(" | ")
-                .append(vehicleType);
+                .append(odometer);
         return sb.toString();
     }
 
