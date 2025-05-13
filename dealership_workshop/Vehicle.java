@@ -1,18 +1,17 @@
 package dealership_workshop;
+import java.util.Objects; //why do we need this
 
 class Vehicle extends User_Interface {
-    // will hold info about a specific vehicle\
-    //will hold getters and setters for every field
-    int vin;
-    int year;
-    String make;
-    String model;
-    String vehicleType;
-    String color;
-    int odometer;
-    double price;
+    private String vin;
+    private int year;
+    private String make;
+    private String model;
+    private String vehicleType;
+    private String color;
+    private double odometer;
+    private double price;
 
-     public Vehicle(int vin, int year, String make, String model, String vehicleType, String color, int odometer, double price) {
+     public Vehicle(String vin, int year, String make, String model, String vehicleType, String color, double odometer, double price) {
         this.vin = vin;
         this.year = year;
         this.make = make;
@@ -22,38 +21,8 @@ class Vehicle extends User_Interface {
         this.odometer = odometer;
         this.price = price;
     }
-      Vehicle(String line){
-        String[] fields = line.split("\\|");
-        vin = Integer.parseInt(fields[0]);
-        year = Integer.parseInt(fields[1]);
-        make = fields[2];
-        model = fields[3];
-        vehicleType = fields[4];
-        color = fields[5];
-        odometer = Integer.parseInt(fields[6]);
-        price = Double.parseDouble(fields[7]);
-    }
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\n")
-                .append(vin)
-                .append(" | ")
-                .append(year)
-                .append(" | ")
-                .append(make)
-                .append(" | ")
-                .append(model)
-                .append(" | ")
-                .append(vehicleType)
-                .append(" | ")
-                .append(color)
-                .append(" | ")
-                .append(odometer);
-        return sb.toString();
-    }
 
-    public int getVin() {
+    public String getVin() {
         return vin;
     }
 
@@ -77,11 +46,29 @@ class Vehicle extends User_Interface {
         return color;
     }
 
-    public int getOdometer() {
+    public double getOdometer() {
         return odometer;
     }
 
     public double getPrice() {
         return price;
     }
+
+    public String toFileString() {
+         return vin + " | " +  year + " | "  + make + " | " + model + " | " + vehicleType + " | " + color + " | " + odometer + " | " + price;
+    }
+    //I have no idea what any of this means
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Vehicle vehicle = (Vehicle) o;
+        return Objects.equals(vin, vehicle.vin);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(vin);
+    }
+
 }

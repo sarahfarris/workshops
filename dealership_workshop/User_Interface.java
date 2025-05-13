@@ -1,108 +1,160 @@
 package dealership_workshop;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import static dealership_workshop.Car_Dealership.*;
-import static dealership_workshop.Dealership_File_Manager.fileName;
+import java.util.List;
+import java.util.Scanner;
 
 public class User_Interface {
-    // this class will contain methods that will display menu, and search functions (getByVehicleType, etc)
+  private Car_Dealership dealership;
+  private static Scanner scanner = new Scanner(System.in);
 
-    //this class will call on methods in the dealership class
+  public User_Interface() {
+    // put menu in here
+  }
 
-    // responsible for all output to the screen, reading user input, and "dispatching" of the commands to the dealership as needed.  (ex: when the user selects "List all Vehicles", UserInterface would
+  private void init() {
+    // loads the dealership info
+    this.dealership =
+        Dealership_File_Manager.getDealership(); // calling the dealership object declared above
+  }
 
-    //call the appropriate Dealership method and then display the vehicles it
-    //returns
-    String car_dealership;
-
-
-    public void userInterface() {
-        //put menu in here
+  public void display() {
+    init(); // call on the initialization of the dealership object
+    boolean keepGoing = true;
+    while (keepGoing) {
+      displayMenu();
+      keepGoing = processUserChoice(Integer.parseInt(scanner.nextLine()));
     }
+    System.out.println("Thank you for using our app. Exiting...");
+  }
 
-    public void display(Car_Dealership car_dealership) {
-        //not sure what to put in here
-        init();
-        String user_input = scanner.nextLine();
-        System.out.println("==============\n Pick your Dealership ==============");
-        System.out.println("1. Add");
+  public static void displayMenu() {
+    String menu =
+        """
+                    1) Find vehicles within a price range
+                    2) Find vehicles by make/model
+                    3) Find vehicles by year range
+                    4) Find vehicles by color
+                    5) Find vehicles by mileage
+                    6) Find vehicles by type
+                    7) List ALL vehicles
+                    8) Add vehicle
+                    9) Remove vehicle
+                    10) Quit""";
+    System.out.println(menu);
+  }
 
+  public boolean processUserChoice(int choice) {
+    switch (choice) {
+      case 1:
+        processGetByPrice();
+        break;
+      case 2:
+        processGetByMakeModel();
+        break;
+      case 3:
+        processGetByYear();
+        break;
+      case 4:
+        processGetByColor();
+        break;
+      case 5:
+        processGetByMileage();
+        break;
+      case 6:
+        processGetByVehicleType();
+        break;
+      case 7:
+        displayVehicles(dealership.getInventory());
+        break;
+      case 8:
+        processAddVehicle();
+        break;
+      case 9:
+        processRemoveVehicle();
+        break;
+      case 10:
+        return false; // why do we say false
+      default:
+        System.out.println("Not a valid option");
     }
+    return true; //why do we need this here
+  }
 
-    //method to initialize the dealership - loads data, called by display()
-    private void init() {
-        //loads the dealership info
-        this.car_dealership = "D & B Used Cars | 111 Old Benbrook Rd | 817-555-5555";
-        Car_Dealership.dealerships.add(this);
+  public void processGetByPrice() {
+    System.out.println("What is the min price?");
+    double min = Double.parseDouble(scanner.nextLine());
+    System.out.println("What is the max price?");
+    double max = Double.parseDouble(scanner.nextLine());
+    displayVehicles(dealership.getVehiclesByPrice(min, max));
+  }
 
-        //load inventory
-        Car_Dealership.dealerships.add(new Vehicle("126583129743 | 2017 | Ford | Fusion | Sedan | Grey | 86234"));
-        //replace (new Vehicle("ford")) with "this"?
-//        fileName.add(new Vehicle("126583129743 | 2017 | Ford | Fusion | Sedan | Grey | 86234")); dont know if I need this line
-        System.out.println("Dealership " + this.car_dealership + " initialized");
+  public void processGetByMakeModel() {
+    System.out.println("What is the make?");
+    String user_input = scanner.nextLine();
+    System.out.println("What is the model?");
+    String user_input2 = scanner.nextLine();
+    displayVehicles(dealership.getVehiclesByMakeAndModel(user_input, user_input2));
+  }
+
+  public void processGetByYear() {
+    System.out.println("What is the minimum year you would like to search through?");
+    int user_input = scanner.nextInt();
+    System.out.println("What is the maximum year you would like to search through?");
+    int user_input2 = scanner.nextInt(); // the demo has it parsing into a string
+    displayVehicles(dealership.getVehiclesByYear(user_input, user_input2));
+  }
+
+  public void processGetByColor() {
+    System.out.println("Please enter the color you would like to search: ");
+    String colorChoice = scanner.nextLine();
+    displayVehicles(dealership.getVehiclesByColor(colorChoice));
+  }
+
+  public void processGetByMileage() {
+    System.out.println("Enter the minimum mileage you would like to search by: ");
+    double min = scanner.nextDouble();
+    System.out.println("Enter the maximum mileage you would like to search by: ");
+    double max = scanner.nextDouble();
+    displayVehicles(dealership.getVehiclesByMileage(min, max));
+  }
+
+  public void processGetByVehicleType() {
+    System.out.println("Enter the type of vehicle you would like to find: ");
+    String vehicleType = scanner.nextLine();
+    displayVehicles(dealership.getVehiclesByType(vehicleType));
+  }
+
+  public void processAddVehicle() {
+    System.out.println("VIN: ");
+    String vin = scanner.nextLine();
+    System.out.println("Year: ");
+    int year = scanner.nextInt();
+    System.out.println("Make: ");
+    String make = scanner.nextLine();
+    System.out.println("Model: ");
+    String model = scanner.nextLine();
+    System.out.println("Vehicle type: ");
+    String type = scanner.nextLine();
+    System.out.println("Color: ");
+    String color = scanner.nextLine();
+    System.out.println("Odometer reading: ");
+    double odometer = scanner.nextDouble();
+    System.out.println("Price: ");
+    double price = scanner.nextDouble();
+    Vehicle vehicle = new Vehicle(vin, year, make, model, type, color, odometer, price);
+    this.dealership.addVehicle(vehicle);
+  }
+
+  public void processRemoveVehicle() {
+    System.out.println("Please enter the VIN of the vehicle you wish to remove: ");
+    String vin = scanner.nextLine();
+    Vehicle vehicle = new Vehicle(vin, 0, null, null, null, null, 0, 0);
+    this.dealership.removeVehicle(vehicle);
+  }
+
+  private void displayVehicles(List<Vehicle> vehicleList) {
+    for (Vehicle vehicle : vehicleList) {
+      System.out.println(vehicle.toFileString());
     }
-
-    //helper method as advised by the workbook
-    //what should I name the parameter?
-    private void displayVehicles(ArrayList<Vehicle> vehicleArrayList) {
-        //displays the list and can be called from all the getVehicles type methods, should include a parameter that is passed in containing the vehicles to list, create a loop and display the vehicles
-        ArrayList<Vehicle> vehicles = new ArrayList<>();
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(fileName));
-            String line;
-            while ((line = br.readLine()) != null) {
-                Vehicle vehicle = new Vehicle(line);
-                vehicles.add(vehicle);
-            }
-            br.close();
-        } catch (IOException e) {
-            System.out.println("Error!");
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    public void processGetByPrice() {
-
-    }
-
-    public void processGetByMakeModel() {
-
-    }
-
-    public void processGetByYear() {
-
-    }
-
-    public void processGetByColor() {
-
-    }
-
-    public void processGetByMileage() {
-
-    }
-
-    public void processGetByVehicleType() {
-
-    }
-
-    public void processGetAllVehicles() {
-        //list all vehicles in a dealership
-        //1. call the dealership's getAllVehicles() 2. call displayVehicles() helper method passing it the list returned from getAllVehicles()
-        getAllVehicles(fileName);
-        displayVehicles(readAllVehicles(fileName));
-    }
-
-    public void processAddVehicle(Vehicle vehicle) {
-        //get user input, create vehicle and add to inventory
-    }
-
-    public void processRemoveVehicle(Vehicle vehicle) {
-        //get user input, create vehicle? and remove it
-    }
-
+  }
 }

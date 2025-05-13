@@ -5,83 +5,91 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 import static javax.print.attribute.standard.MediaSizeName.C;
 
 public class Dealership_File_Manager {
-    //this will manage the files that contain cars
-    // ill be responsible for reading the dealership file,
-    //parsing the data, and creating a Dealership object full of vehicles from the
-    //file. It will also be responsible for saving a dealership and the vehicles back
-    //into the file in the same pipe-delimited format
-    BufferedWriter bw = new BufferedWriter(new FileWriter("inventory.csv")); //do I change the file name to src/main/java/week5/inventory?
-    static String fileName = "inventory.csv";
 
-    public Dealership_File_Manager() throws IOException {
+  static String fileName = "src/main/resources/inventory.csv";
+
+  public static Car_Dealership getDealership() {
+    Car_Dealership dealership = null;
+    try (BufferedReader br =
+        new BufferedReader(new FileReader("inventory.csv"))) { // this is try with resources
+      String[] dealershipString = br.readLine().split("\\|"); //this is the part I need to study
+      dealership =
+          new Car_Dealership(dealershipString[0], dealershipString[1], dealershipString[2]);
+      String line;
+      while ((line = br.readLine()) != null) {
+        String[] vehicleString = line.split("\\|");
+        Vehicle vehicle =
+            new Vehicle(
+                vehicleString[0],
+                Integer.parseInt(vehicleString[1].trim()), //added trim to remove the spaces
+                vehicleString[2],
+                vehicleString[3],
+                vehicleString[4],
+                vehicleString[5],
+                Double.parseDouble(vehicleString[6]), Double.parseDouble(vehicleString[7]));
+        dealership.getInventory().add(vehicle);
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
-    public String readLine() throws IOException {
-        return readLine();
+    return dealership;
+  }
+
+  public static void saveDealership(Car_Dealership dealership) {
+    try (FileWriter fileWriter = new FileWriter("inventory.csv")) {
+      fileWriter.write(dealership.toFileString());
+      for (Vehicle vehicle : dealership.getInventory()) {
+        fileWriter.write("\n" + vehicle.toFileString());
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
+  }
 
-    public Car_Dealership getDealership(String fileName){
-        //should load and read inventory file
-        ArrayList<Vehicle> inventory = new ArrayList<>();
-        try {
-            BufferedReader br = new BufferedReader(new FileReader("inventory.csv"));
-            String line;
-            while ((line = br.readLine()) != null){
-                Car_Dealership dealership = new Car_Dealership(line);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
+  // method to create the original data file
+  static void createInventoryFile() {
+    File inventory = new File(fileName); // pathway to file
+    BufferedWriter bw;
+    Scanner scanner = new Scanner(System.in); // used to add to file, maybe make new method
+
+    try {
+      if (inventory.exists()) {
+        bw = new BufferedWriter(new FileWriter(inventory, true));
+        System.out.println("File exists, adding to file.");
+      } else {
+        bw = new BufferedWriter(new FileWriter(inventory));
+      }
+    } catch (IOException e) {
+      System.out.println("Error loading vehicle inventory");
+      createBackupFile(fileName);
+      throw new RuntimeException(e);
     }
-
-    public void saveDealership(Car_Dealership dealership){
-        //don't write anything in here yet, this method will overwrite the inventory.csv file with the current dealership info and inventory list
+    // suggestion from intelliJ to add try/catch around bw.close()
+    try {
+      bw.close();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
-    //method to create the original data file
-    static void createInventoryFile(){
-        File inventory = new File(fileName); //pathway to file
-        BufferedWriter bw;
-        Scanner scanner = new Scanner(System.in); //used to add to file, maybe make new method
+  }
 
-        try {
-            if (inventory.exists()) {
-                bw = new BufferedWriter(new FileWriter(inventory, true));
-                System.out.println("File exists, adding to file.");
-            } else {
-                bw = new BufferedWriter(new FileWriter (inventory));
-            }
-        } catch (IOException e) {
-            System.out.println("Error loading vehicle inventory");
-            createBackupFile(fileName);
-            throw new RuntimeException(e);
-        }
-        //suggestion from intelliJ to add try/catch around bw.close()
-        try {
-            bw.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+  // method to create backup data file
+  public static void createBackupFile(String backupFileName) {
+    Path sourcePath = Paths.get(fileName);
+    Path backupPath =
+        Paths.get(
+            backupFileName); // suggestion from intelliJ and google, need to know more about what
+                             // this does
+    try {
+      Files.copy(sourcePath, backupPath, StandardCopyOption.REPLACE_EXISTING);
+      System.out.println("Backup file created.");
+    } catch (IOException e) {
+      System.out.println("Error backing up file:" + e.getMessage());
+      throw new RuntimeException(e);
     }
-
-    //method to create backup data file
-    public static void createBackupFile(String backupFileName){
-        Path sourcePath = Paths.get(fileName);
-        Path backupPath = Paths.get(backupFileName); //suggestion from intelliJ and google, need to know more about what this does
-        try {
-            Files.copy(sourcePath, backupPath, StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("Backup file created.");
-        } catch (IOException e) {
-            System.out.println("Error backing up file:" + e.getMessage());
-            throw new RuntimeException(e);
-        }
-        }
-
-
-    }
-
+  }
+}
